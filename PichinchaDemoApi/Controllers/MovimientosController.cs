@@ -33,10 +33,19 @@ public class MovimientosController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<List<Movimiento>>> AgregarMovimiento(Movimiento movimiento)
     {
+        var cuentaBuscada = await _context.Cuentas.FirstOrDefaultAsync(c => c.NumeroCuenta == movimiento.CuentaOrigen);
+        if(cuentaBuscada == null)
+            return BadRequest("Cuenta de origen no encontrada.");
         movimiento.Fecha = DateTime.Now;
+        if(movimiento.Valor < 0 && cuentaBuscada.SaldoInicial == 0)
+            return BadRequest("Saldo no disponible.");
+        if(movimiento.Valor < 0 && -movimiento.Valor > cuentaBuscada.SaldoInicial)
+            return BadRequest("Saldo insuficiente.");
+        movimiento.Saldo = cuentaBuscada.SaldoInicial + movimiento.Valor;
+        cuentaBuscada.SaldoInicial = movimiento.Saldo;
         _context.Movimientos.Add(movimiento);
         await _context.SaveChangesAsync();
-        return Ok(await _context.Movimientos.ToListAsync());
+        return Ok(movimiento);
     }
 
     [HttpPut]

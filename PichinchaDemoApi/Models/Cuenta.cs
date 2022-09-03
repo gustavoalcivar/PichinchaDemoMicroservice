@@ -7,4 +7,5 @@ public class Cuenta
     public string TipoCuenta { get; set; } = string.Empty;
     public decimal SaldoInicial { get; set; }
     public bool Estado { get; set; }
+    public string IdentificacionCliente { get; set; }
 }

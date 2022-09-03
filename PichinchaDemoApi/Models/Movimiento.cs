@@ -9,4 +9,5 @@ public class Movimiento
     public string TipoMovimiento { get; set; } = string.Empty;
     public decimal Valor { get; set; }
     public decimal Saldo { get; set; }
+    public string CuentaOrigen { get; set; }
 }
