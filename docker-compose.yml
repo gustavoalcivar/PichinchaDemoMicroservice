@@ -1,0 +1,27 @@
+version: "3.8"
+
+services:
+  microservice:
+    container_name: microservice
+    depends_on:
+      - sql-database
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    links:
+    - sql-database:db
+  
+  sql-database:
+    container_name: mssql
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - 1433:1433
+    volumes:
+      - ~/apps/mssql/data:/var/lib/mssqlql/data
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=mssqlabcd4321.*
+      - hostname=sql1
+
