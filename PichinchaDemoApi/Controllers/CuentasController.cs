@@ -5,11 +5,11 @@ namespace PichinchaDemoApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class CuentaController : ControllerBase
+public class CuentasController : ControllerBase
 {
     private readonly DataContext _context;
 
-    public CuentaController(DataContext context)
+    public CuentasController(DataContext context)
     {
         _context = context;
     }

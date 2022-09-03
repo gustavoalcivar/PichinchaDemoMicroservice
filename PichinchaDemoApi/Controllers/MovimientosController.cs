@@ -6,11 +6,11 @@ namespace PichinchaDemoApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class MovimientoController : ControllerBase
+public class MovimientosController : ControllerBase
 {
     private readonly DataContext _context;
 
-    public MovimientoController(DataContext context)
+    public MovimientosController(DataContext context)
     {
         _context = context;
     }
