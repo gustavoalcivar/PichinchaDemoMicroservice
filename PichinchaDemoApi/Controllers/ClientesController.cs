@@ -67,12 +67,13 @@ public class ClientesController : ControllerBase
     {
         var cuentas = await _context.Cuentas.ToListAsync();
         var cuentasCliente = cuentas.Where(c => c.IdentificacionCliente == identificacionCliente);
+        var movimientos = await _context.Movimientos.ToListAsync();
         var resultado = new List<Reporte>();
         foreach (var cuenta in cuentasCliente)
         {
-            var movimientos = await _context.Movimientos.ToListAsync();
             var movimientosCuenta = movimientos
-                .Where(m => m.CuentaOrigen == cuenta.NumeroCuenta /*&& m.Fecha > fechaInicio && m.Fecha < fechaFin*/);
+                .Where(m => m.CuentaOrigen == cuenta.NumeroCuenta
+                && m.Fecha >= fechaInicio && m.Fecha <= fechaFin.AddDays(1));
             var totalIngresos = movimientosCuenta.Where(m => m.Valor > 0).Sum(m => m.Valor);
             var totalEgresos = movimientosCuenta.Where(m => m.Valor < 0).Sum(m => m.Valor);
             var c = new Reporte {

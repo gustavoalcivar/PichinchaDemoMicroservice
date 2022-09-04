@@ -38,7 +38,6 @@ public class MovimientosController : ControllerBase
         if(cuentaBuscada == null)
             return BadRequest("Cuenta de origen no encontrada.");
 
-        movimiento.Fecha = DateTime.Now;
         if(movimiento.Valor < 0 && cuentaBuscada.SaldoInicial == 0)
             return BadRequest("Saldo no disponible.");
 
@@ -48,13 +47,14 @@ public class MovimientosController : ControllerBase
         var movimientos = await _context.Movimientos.ToListAsync();
         
         var totalRetirosCuenta = movimientos
-            .Where(m => m.Fecha.ToString("yyyyMMdd") == DateTime.Now.ToString("yyyyMMdd")
+            .Where(m => m.Fecha.ToString("yyyyMMdd") == DateTime.UtcNow.AddHours(-5).ToString("yyyyMMdd")
             && m.CuentaOrigen == cuentaBuscada.NumeroCuenta
             && m.Valor < 0)
             .Sum(m => m.Valor);
         if(totalRetirosCuenta + movimiento.Valor < -1000)
             return BadRequest("Cupo diario exedido.");
 
+        movimiento.Fecha = DateTime.UtcNow.AddHours(-5);
         movimiento.Saldo = cuentaBuscada.SaldoInicial + movimiento.Valor;
         cuentaBuscada.SaldoInicial = movimiento.Saldo;
         _context.Movimientos.Add(movimiento);
