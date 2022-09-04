@@ -1,6 +1,7 @@
 using System;
 using Microsoft.AspNetCore.Mvc;
 using PichinchaDemoApi.Models;
+using System.Linq;
 
 namespace PichinchaDemoApi.Controllers;
 
@@ -18,7 +19,10 @@ public class MovimientosController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<Movimiento>>> ObtenerMovimientos()
     {
-        return Ok(await _context.Movimientos.ToListAsync());
+        var movimientos = await _context.Movimientos.ToListAsync();
+        Console.WriteLine("Movimientos del día");
+        Console.WriteLine(movimientos.Where(m => m.Fecha.ToString("yyyyMMdd") == DateTime.Now.ToString("yyyyMMdd")).Sum(m => m.Valor));
+        return Ok(movimientos);
     }
 
     [HttpGet("{movimientoId}")]
@@ -36,11 +40,24 @@ public class MovimientosController : ControllerBase
         var cuentaBuscada = await _context.Cuentas.FirstOrDefaultAsync(c => c.NumeroCuenta == movimiento.CuentaOrigen);
         if(cuentaBuscada == null)
             return BadRequest("Cuenta de origen no encontrada.");
+
         movimiento.Fecha = DateTime.Now;
         if(movimiento.Valor < 0 && cuentaBuscada.SaldoInicial == 0)
             return BadRequest("Saldo no disponible.");
+
         if(movimiento.Valor < 0 && -movimiento.Valor > cuentaBuscada.SaldoInicial)
             return BadRequest("Saldo insuficiente.");
+
+        var movimientos = await _context.Movimientos.ToListAsync();
+        
+        var totalRetirosCuenta = movimientos
+            .Where(m => m.Fecha.ToString("yyyyMMdd") == DateTime.Now.ToString("yyyyMMdd")
+            && m.CuentaOrigen == cuentaBuscada.NumeroCuenta
+            && m.Valor < 0)
+            .Sum(m => m.Valor);
+        if(totalRetirosCuenta + movimiento.Valor < -1000)
+            return BadRequest("Cupo diario exedido.");
+
         movimiento.Saldo = cuentaBuscada.SaldoInicial + movimiento.Valor;
         cuentaBuscada.SaldoInicial = movimiento.Saldo;
         _context.Movimientos.Add(movimiento);
