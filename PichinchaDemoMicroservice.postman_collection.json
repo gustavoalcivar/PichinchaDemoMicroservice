@@ -127,6 +127,41 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Reporte",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:3000/api/Clientes/reporte?identificacionCliente=1007589620&fechaInicio=2022-09-02&fechaFin=2022-09-03",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "3000",
+							"path": [
+								"api",
+								"Clientes",
+								"reporte"
+							],
+							"query": [
+								{
+									"key": "identificacionCliente",
+									"value": "1007589620"
+								},
+								{
+									"key": "fechaInicio",
+									"value": "2022-09-02"
+								},
+								{
+									"key": "fechaFin",
+									"value": "2022-09-03"
+								}
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -181,7 +216,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"numeroCuenta\": \"111000\",\n  \"tipoCuenta\": \"AHORROS\",\n  \"saldoInicial\": 5000,\n  \"estado\": true\n}",
+							"raw": "{\n  \"numeroCuenta\": \"585545\",\n  \"tipoCuenta\": \"Corriente\",\n  \"saldoInicial\": 1000,\n  \"estado\": true,\n  \"identificacionCliente\": \"1007589620\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -210,7 +245,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"cuentaId\": 4,\n  \"saldoInicial\": 50,\n  \"estado\": true\n}",
+							"raw": "{\n  \"cuentaId\": 4,\n  \"saldoInicial\": 50,\n  \"estado\": true,\n  \"identificacionCliente\": \"1007589620\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -306,7 +341,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"tipoMovimiento\": \"DEPÓSITO\",\n  \"valor\": 10,\n  \"saldo\": 100\n}",
+							"raw": "{\n  \"tipoMovimiento\": \"Depósito\",\n  \"valor\": 1000,\n  \"cuentaOrigen\": \"478758\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -335,7 +370,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"movimientoId\": 4,\n  \"tipoMovimiento\": \"DEPÓSITO\",\n  \"valor\": 10,\n  \"saldo\": 100\n}",
+							"raw": "{\n  \"movimientoId\": 4,\n  \"tipoMovimiento\": \"Depósito\",\n  \"valor\": 10,\n  \"saldo\": 100,\n  \"cuentaOrigen\": \"478758\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"

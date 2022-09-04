@@ -1,3 +1,5 @@
+using System;
+using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using PichinchaDemoApi.Models;
 
@@ -58,5 +60,32 @@ public class ClientesController : ControllerBase
         cliente.Estado = false;
         await _context.SaveChangesAsync();
         return Ok(await _context.Clientes.ToListAsync());
+    }
+
+    [HttpGet("reporte")]
+    public async Task<ActionResult<List<Reporte>>> Reporte(string identificacionCliente, DateTime fechaInicio, DateTime fechaFin)
+    {
+        var cuentas = await _context.Cuentas.ToListAsync();
+        var cuentasCliente = cuentas.Where(c => c.IdentificacionCliente == identificacionCliente);
+        var resultado = new List<Reporte>();
+        foreach (var cuenta in cuentasCliente)
+        {
+            var movimientos = await _context.Movimientos.ToListAsync();
+            var movimientosCuenta = movimientos
+                .Where(m => m.CuentaOrigen == cuenta.NumeroCuenta /*&& m.Fecha > fechaInicio && m.Fecha < fechaFin*/);
+            var totalIngresos = movimientosCuenta.Where(m => m.Valor > 0).Sum(m => m.Valor);
+            var totalEgresos = movimientosCuenta.Where(m => m.Valor < 0).Sum(m => m.Valor);
+            var c = new Reporte {
+                NumeroCuenta = cuenta.NumeroCuenta,
+                IdentificacionCliente = identificacionCliente,
+                TipoCuenta = cuenta.NumeroCuenta,
+                Estado = cuenta.Estado,
+                TotalIngresos = totalIngresos,
+                TotalEgresos = totalEgresos,
+                SaldoActual = cuenta.SaldoInicial
+            };
+            resultado.Add(c);
+        }
+        return Ok(resultado);
     }
 }

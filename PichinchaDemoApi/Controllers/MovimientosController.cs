@@ -19,10 +19,7 @@ public class MovimientosController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<List<Movimiento>>> ObtenerMovimientos()
     {
-        var movimientos = await _context.Movimientos.ToListAsync();
-        Console.WriteLine("Movimientos del día");
-        Console.WriteLine(movimientos.Where(m => m.Fecha.ToString("yyyyMMdd") == DateTime.Now.ToString("yyyyMMdd")).Sum(m => m.Valor));
-        return Ok(movimientos);
+        return Ok(await _context.Movimientos.ToListAsync());
     }
 
     [HttpGet("{movimientoId}")]
