@@ -85,7 +85,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n  \"clienteId\": 3,\n  \"nombre\": \"Javier\",\n  \"genero\": \"MASCULINO\",\n  \"edad\": 40,\n  \"identificacion\": \"1818181818\",\n  \"direccion\": \"Ambato\",\n  \"telefono\": \"09955555\",\n  \"contrasena\": \"contra123456789\",\n  \"estado\": true\n}",
+							"raw": "{\n  \"personaId\": 3,\n  \"nombre\": \"Javier\",\n  \"genero\": \"MASCULINO\",\n  \"edad\": 40,\n  \"identificacion\": \"1818181818\",\n  \"direccion\": \"Ambato\",\n  \"telefono\": \"09955555\",\n  \"contrasena\": \"contra123456789\",\n  \"estado\": true\n}",
 							"options": {
 								"raw": {
 									"language": "json"
