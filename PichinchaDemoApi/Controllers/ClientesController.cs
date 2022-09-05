@@ -46,7 +46,7 @@ public class ClientesController : ControllerBase
     [HttpPut]
     public async Task<ActionResult<Cliente>> EditarCliente(Cliente cliente)
     {
-        var clienteBuscado = await unitOfWork.ClienteRepository.Obtener(cliente.ClienteId);
+        var clienteBuscado = await unitOfWork.ClienteRepository.Obtener(cliente.PersonaId);
         if(clienteBuscado == null)
             return BadRequest("Cliente no encontrado.");
         clienteBuscado.Nombre = cliente.Nombre;

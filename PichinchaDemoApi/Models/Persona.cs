@@ -1,7 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace PichinchaDemoApi.Models;
 
 public abstract class Persona
 {
+    [Key]
     public int PersonaId { get; set; }
     public string Nombre { get; set; } = string.Empty;
     public string Genero { get; set; } = string.Empty;

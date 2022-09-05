@@ -11,16 +11,15 @@ use DemoPichincha;
 go
 
 CREATE TABLE Clientes(
-ClienteId int not null identity(1,1) primary key,
-Contrasena nvarchar(100),
-Estado bit,
+PersonaId int not null identity(1,1) primary key,
 Nombre nvarchar(100),
 Genero nvarchar(20),
 Edad int,
 Identificacion nvarchar(30),
 Direccion nvarchar(100),
-Telefono nvarchar(30)--,
---Discriminator nvarchar(100)
+Telefono nvarchar(30),
+Contrasena nvarchar(100),
+Estado bit
 )
 
 CREATE TABLE Cuentas(
