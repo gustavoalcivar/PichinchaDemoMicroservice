@@ -2,6 +2,7 @@ using System;
 using Microsoft.AspNetCore.Mvc;
 using PichinchaDemoApi.Models;
 using System.Linq;
+using PichinchaDemoApi.Repository;
 
 namespace PichinchaDemoApi.Controllers;
 
@@ -9,32 +10,33 @@ namespace PichinchaDemoApi.Controllers;
 [Route("api/[controller]")]
 public class MovimientosController : ControllerBase
 {
-    private readonly DataContext _context;
+    private readonly UnitOfWork unitOfWork;
 
     public MovimientosController(DataContext context)
     {
-        _context = context;
+        unitOfWork = new UnitOfWork(context);
     }
 
     [HttpGet]
     public async Task<ActionResult<List<Movimiento>>> ObtenerMovimientos()
     {
-        return Ok(await _context.Movimientos.ToListAsync());
+        return Ok(await unitOfWork.MovimientoRepository.ObtenerTodos());
     }
 
     [HttpGet("{movimientoId}")]
     public async Task<ActionResult<Movimiento>> ObtenerMovimiento(int movimientoId)
     {
-        var movimiento = await _context.Movimientos.FindAsync(movimientoId);
+        var movimiento = await unitOfWork.MovimientoRepository.Obtener(movimientoId);
         if(movimiento == null)
             return BadRequest("Movimiento no encontrado.");
         return Ok(movimiento);
     }
 
     [HttpPost]
-    public async Task<ActionResult<List<Movimiento>>> AgregarMovimiento(Movimiento movimiento)
+    public async Task<ActionResult<Movimiento>> AgregarMovimiento(Movimiento movimiento)
     {
-        var cuentaBuscada = await _context.Cuentas.FirstOrDefaultAsync(c => c.NumeroCuenta == movimiento.CuentaOrigen);
+        var cuentas = await unitOfWork.CuentaRepository.ObtenerTodos();
+        var cuentaBuscada = cuentas.FirstOrDefault(c => c.NumeroCuenta == movimiento.CuentaOrigen);
         if(cuentaBuscada == null)
             return BadRequest("Cuenta de origen no encontrada.");
 
@@ -44,7 +46,7 @@ public class MovimientosController : ControllerBase
         if(movimiento.Valor < 0 && -movimiento.Valor > cuentaBuscada.SaldoInicial)
             return BadRequest("Saldo insuficiente.");
 
-        var movimientos = await _context.Movimientos.ToListAsync();
+        var movimientos = await unitOfWork.MovimientoRepository.ObtenerTodos();
         
         var totalRetirosCuenta = movimientos
             .Where(m => m.Fecha.ToString("yyyyMMdd") == DateTime.UtcNow.AddHours(-5).ToString("yyyyMMdd")
@@ -57,32 +59,34 @@ public class MovimientosController : ControllerBase
         movimiento.Fecha = DateTime.UtcNow.AddHours(-5);
         movimiento.Saldo = cuentaBuscada.SaldoInicial + movimiento.Valor;
         cuentaBuscada.SaldoInicial = movimiento.Saldo;
-        _context.Movimientos.Add(movimiento);
-        await _context.SaveChangesAsync();
+        await unitOfWork.MovimientoRepository.Agregar(movimiento);
+        await unitOfWork.Guardar();
         return Ok(movimiento);
     }
 
     [HttpPut]
-    public async Task<ActionResult<List<Movimiento>>> EditarMovimiento(Movimiento movimiento)
+    public async Task<ActionResult<Movimiento>> EditarMovimiento(Movimiento movimiento)
     {
-        var movimientoBuscado = await _context.Movimientos.FindAsync(movimiento.MovimientoId);
+        var movimientoBuscado = await unitOfWork.MovimientoRepository.Obtener(movimiento.MovimientoId);
         if(movimientoBuscado == null)
             return BadRequest("Movimiento no encontrado.");
+        movimientoBuscado.Fecha = movimiento.Fecha;
         movimientoBuscado.TipoMovimiento = movimiento.TipoMovimiento;
         movimientoBuscado.Valor = movimiento.Valor;
         movimientoBuscado.Saldo = movimiento.Saldo;
-        await _context.SaveChangesAsync();
-        return Ok(await _context.Movimientos.ToListAsync());
+        movimientoBuscado.CuentaOrigen = movimiento.CuentaOrigen;
+        await unitOfWork.Guardar();
+        return Ok(movimientoBuscado);
     }
 
     [HttpDelete("{movimientoId}")]
-    public async Task<ActionResult<List<Movimiento>>> EliminarMovimiento(int movimientoId)
+    public async Task<ActionResult<Movimiento>> EliminarMovimiento(int movimientoId)
     {
-        var movimiento = await _context.Movimientos.FindAsync(movimientoId);
+        var movimiento = await unitOfWork.MovimientoRepository.Obtener(movimientoId);
         if(movimiento == null)
             return BadRequest("Movimiento no encontrado.");
-        _context.Movimientos.Remove(movimiento);
-        await _context.SaveChangesAsync();
-        return Ok(await _context.Movimientos.ToListAsync());
+        await unitOfWork.MovimientoRepository.Eliminar(movimientoId);
+        await unitOfWork.Guardar();
+        return Ok(movimiento);
     }
 }

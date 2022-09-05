@@ -2,6 +2,7 @@ using System;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using PichinchaDemoApi.Models;
+using PichinchaDemoApi.Repository;
 
 namespace PichinchaDemoApi.Controllers;
 
@@ -9,65 +10,73 @@ namespace PichinchaDemoApi.Controllers;
 [Route("api/[controller]")]
 public class ClientesController : ControllerBase
 {
-    private readonly DataContext _context;
+    private readonly UnitOfWork unitOfWork;
 
     public ClientesController(DataContext context)
     {
-        _context = context;
+        unitOfWork = new UnitOfWork(context);
     }
 
     [HttpGet]
     public async Task<ActionResult<List<Cliente>>> ObtenerClientes()
     {
-        return Ok(await _context.Clientes.ToListAsync());
+        return Ok(await unitOfWork.ClienteRepository.ObtenerTodos());
     }
 
     [HttpGet("{clienteId}")]
     public async Task<ActionResult<Cliente>> ObtenerCliente(int clienteId)
     {
-        var cliente = await _context.Clientes.FindAsync(clienteId);
+        var cliente = await unitOfWork.ClienteRepository.Obtener(clienteId);
         if(cliente == null)
             return BadRequest("Cliente no encontrado.");
         return Ok(cliente);
     }
 
     [HttpPost]
-    public async Task<ActionResult<List<Cliente>>> AgregarCliente(Cliente cliente)
+    public async Task<ActionResult<Cliente>> AgregarCliente(Cliente cliente)
     {
-        _context.Clientes.Add(cliente);
-        await _context.SaveChangesAsync();
-        return Ok(await _context.Clientes.ToListAsync());
+        var clientes = await unitOfWork.ClienteRepository.ObtenerTodos(c => c.Identificacion == cliente.Identificacion);
+        if(clientes.Any())
+            return BadRequest("Ya existe un cliente con la misma identificación.");
+        await unitOfWork.ClienteRepository.Agregar(cliente);
+        await unitOfWork.Guardar();
+        return Ok(cliente);
     }
 
     [HttpPut]
-    public async Task<ActionResult<List<Cliente>>> EditarCliente(Cliente cliente)
+    public async Task<ActionResult<Cliente>> EditarCliente(Cliente cliente)
     {
-        var clienteBuscado = await _context.Clientes.FindAsync(cliente.ClienteId);
+        var clienteBuscado = await unitOfWork.ClienteRepository.Obtener(cliente.ClienteId);
         if(clienteBuscado == null)
             return BadRequest("Cliente no encontrado.");
+        clienteBuscado.Nombre = cliente.Nombre;
+        clienteBuscado.Genero = cliente.Genero;
+        clienteBuscado.Edad = cliente.Edad;
+        clienteBuscado.Direccion = cliente.Direccion;
+        clienteBuscado.Telefono = cliente.Telefono;
         clienteBuscado.Contrasena = cliente.Contrasena;
         clienteBuscado.Estado = cliente.Estado;
-        await _context.SaveChangesAsync();
-        return Ok(await _context.Clientes.ToListAsync());
+        await unitOfWork.Guardar();
+        return Ok(clienteBuscado);
     }
 
     [HttpDelete("{clienteId}")]
-    public async Task<ActionResult<List<Cliente>>> EliminarCliente(int clienteId)
+    public async Task<ActionResult<Cliente>> EliminarCliente(int clienteId)
     {
-        var cliente = await _context.Clientes.FindAsync(clienteId);
+        var cliente = await unitOfWork.ClienteRepository.Obtener(clienteId);
         if(cliente == null)
             return BadRequest("Cliente no encontrado.");
         cliente.Estado = false;
-        await _context.SaveChangesAsync();
-        return Ok(await _context.Clientes.ToListAsync());
+        await unitOfWork.Guardar();
+        return Ok(cliente);
     }
 
     [HttpGet("reporte")]
     public async Task<ActionResult<List<Reporte>>> Reporte(string identificacionCliente, DateTime fechaInicio, DateTime fechaFin)
     {
-        var cuentas = await _context.Cuentas.ToListAsync();
+        var cuentas = await unitOfWork.CuentaRepository.ObtenerTodos();
         var cuentasCliente = cuentas.Where(c => c.IdentificacionCliente == identificacionCliente);
-        var movimientos = await _context.Movimientos.ToListAsync();
+        var movimientos = await unitOfWork.MovimientoRepository.ObtenerTodos();
         var resultado = new List<Reporte>();
         foreach (var cuenta in cuentasCliente)
         {
