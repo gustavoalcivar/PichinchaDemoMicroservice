@@ -16,10 +16,7 @@ public class CuentasController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Cuenta>>> ObtenerCuentas()
-    {
-        return Ok(await unitOfWork.CuentaRepository.ObtenerTodos());
-    }
+    public async Task<ActionResult<List<Cuenta>>> ObtenerCuentas() => Ok(await unitOfWork.CuentaRepository.ObtenerTodos());
 
     [HttpGet("{cuentaId}")]
     public async Task<ActionResult<Cuenta>> ObtenerCuenta(int cuentaId)

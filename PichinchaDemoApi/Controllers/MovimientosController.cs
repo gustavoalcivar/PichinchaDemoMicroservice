@@ -18,10 +18,7 @@ public class MovimientosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Movimiento>>> ObtenerMovimientos()
-    {
-        return Ok(await unitOfWork.MovimientoRepository.ObtenerTodos());
-    }
+    public async Task<ActionResult<List<Movimiento>>> ObtenerMovimientos() => Ok(await unitOfWork.MovimientoRepository.ObtenerTodos());
 
     [HttpGet("{movimientoId}")]
     public async Task<ActionResult<Movimiento>> ObtenerMovimiento(int movimientoId)

@@ -18,10 +18,7 @@ public class ClientesController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<List<Cliente>>> ObtenerClientes()
-    {
-        return Ok(await unitOfWork.ClienteRepository.ObtenerTodos());
-    }
+    public async Task<ActionResult<List<Cliente>>> ObtenerClientes() => Ok(await unitOfWork.ClienteRepository.ObtenerTodos());
 
     [HttpGet("{clienteId}")]
     public async Task<ActionResult<Cliente>> ObtenerCliente(int clienteId)
