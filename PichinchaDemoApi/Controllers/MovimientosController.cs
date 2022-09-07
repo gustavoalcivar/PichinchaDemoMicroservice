@@ -35,6 +35,9 @@ public class MovimientosController : ControllerBase
         if(cuentaBuscada == null)
             return BadRequest("Cuenta de origen no encontrada.");
 
+        if(!cuentaBuscada.Estado)
+            return BadRequest("La cuenta no está activa.");
+        
         if(movimiento.Valor < 0 && cuentaBuscada.SaldoInicial == 0)
             return BadRequest("Saldo no disponible.");
 
