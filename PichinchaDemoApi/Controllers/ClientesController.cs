@@ -1,5 +1,3 @@
-using System;
-using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using PichinchaDemoApi.Models;
 using PichinchaDemoApi.Repository;
@@ -32,6 +30,8 @@ public class ClientesController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Cliente>> AgregarCliente(Cliente cliente)
     {
+        if(string.IsNullOrEmpty(cliente.Identificacion))
+            return BadRequest("La identificación es requerida.");
         var clientes = await unitOfWork.ClienteRepository.ObtenerTodos(c => c.Identificacion == cliente.Identificacion);
         if(clientes.Any())
             return BadRequest("Ya existe un cliente con la misma identificación.");

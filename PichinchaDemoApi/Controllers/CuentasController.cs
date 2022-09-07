@@ -30,6 +30,8 @@ public class CuentasController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<Cuenta>> AgregarCuenta(Cuenta cuenta)
     {
+        if(string.IsNullOrEmpty(cuenta.NumeroCuenta))
+            return BadRequest("El número de cuenta es requerido.");
         var cuentas = await unitOfWork.CuentaRepository.ObtenerTodos(c => c.NumeroCuenta == cuenta.NumeroCuenta);
         if(cuentas.Any())
             return BadRequest("Ya existe una cuenta con el mismo número.");

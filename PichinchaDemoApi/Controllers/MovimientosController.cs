@@ -1,7 +1,5 @@
-using System;
 using Microsoft.AspNetCore.Mvc;
 using PichinchaDemoApi.Models;
-using System.Linq;
 using PichinchaDemoApi.Repository;
 
 namespace PichinchaDemoApi.Controllers;

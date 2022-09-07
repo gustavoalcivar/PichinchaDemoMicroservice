@@ -1,0 +1,28 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30114.105
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PichinchaDemoApi", "PichinchaDemoApi\PichinchaDemoApi.csproj", "{F13367D1-DFE8-4842-A54B-33D06BFDE149}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PichinchaDemoApi.UnitTest", "PichinchaDemoApi.Test\PichinchaDemoApi.UnitTest.csproj", "{8BA79DD8-56DE-49B7-8B63-AECF084A8D96}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{F13367D1-DFE8-4842-A54B-33D06BFDE149}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F13367D1-DFE8-4842-A54B-33D06BFDE149}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F13367D1-DFE8-4842-A54B-33D06BFDE149}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F13367D1-DFE8-4842-A54B-33D06BFDE149}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8BA79DD8-56DE-49B7-8B63-AECF084A8D96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8BA79DD8-56DE-49B7-8B63-AECF084A8D96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8BA79DD8-56DE-49B7-8B63-AECF084A8D96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8BA79DD8-56DE-49B7-8B63-AECF084A8D96}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

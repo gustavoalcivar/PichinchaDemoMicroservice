@@ -1,6 +1,4 @@
-using System;
 using PichinchaDemoApi.Models;
-using PichinchaDemoApi.Data;
 
 namespace PichinchaDemoApi.Repository;
 
