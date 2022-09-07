@@ -14,7 +14,7 @@ public class Tests
         serviceUrl = "http://localhost:3000";
     }
 
-    [Test]
+    [Test, Order(6)]
     public async Task ObtenerTodosLosClientes()
     {
         // Arrange
@@ -29,7 +29,7 @@ public class Tests
         Assert.IsTrue(clientes.Any());
     }
 
-    [Test]
+    [Test, Order(1)]
     public async Task InsertarCliente()
     {
         // Arrange
@@ -72,37 +72,43 @@ public class Tests
         Assert.That(numeroClientesDespues, Is.EqualTo(numeroClientesAntes + 1));
     }
 
-    [Test]
+    [Test, Order(3)]
     public async Task ObtenerUnaCuenta()
     {
         // Arrange
         var httpClient = new HttpClient { BaseAddress = new Uri(serviceUrl) };
 
         // Act
-        var response = await httpClient.GetAsync("/api/Cuentas/1");
+        var response = await httpClient.GetAsync("/api/Cuentas");
         var responseJson = await response.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
+        List<Cuenta> cuentas = JsonConvert.DeserializeObject<List<Cuenta>>(responseJson);
+        response = await httpClient.GetAsync($"/api/Cuentas/{cuentas.FirstOrDefault()?.CuentaId}");
+        responseJson = await response.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
         Cuenta cuenta = JsonConvert.DeserializeObject<Cuenta>(responseJson);
 
         // Assert
         Assert.IsTrue(cuenta.SaldoInicial >= 0);
     }
 
-    [Test]
+    [Test, Order(5)]
     public async Task BorrarCuenta()
     {
         // Arrange
         var httpClient = new HttpClient { BaseAddress = new Uri(serviceUrl) };
         
         // Act
-        var response = await httpClient.DeleteAsync("/api/Cuentas/1");
+        var response = await httpClient.GetAsync("/api/Cuentas");
         var responseJson = await response.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
+        List<Cuenta> cuentas = JsonConvert.DeserializeObject<List<Cuenta>>(responseJson);
+        response = await httpClient.DeleteAsync($"/api/Cuentas/{cuentas.FirstOrDefault()?.CuentaId}");
+        responseJson = await response.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
         Cuenta cuenta = JsonConvert.DeserializeObject<Cuenta>(responseJson);
 
         // Assert
         Assert.IsFalse(cuenta.Estado);
     }
 
-    [Test]
+    [Test, Order(2)]
     public async Task NuevaCuentaYMovimiento()
     {
         // Arrange
@@ -147,7 +153,7 @@ public class Tests
         Assert.IsTrue(cuenta.SaldoInicial == 100);
     }
 
-    [Test]
+    [Test, Order(4)]
     public async Task BorrarMovimiento()
     {
         // Arrange
@@ -162,7 +168,7 @@ public class Tests
         List<Movimiento> movimientos = JsonConvert.DeserializeObject<List<Movimiento>>(responseJson);
         numeroMovimientosAntes = movimientos.Count();
 
-        await httpClient.DeleteAsync("/api/Movimientos/1");
+        await httpClient.DeleteAsync($"/api/Movimientos/{movimientos.FirstOrDefault()?.MovimientoId}");
         
         response = await httpClient.GetAsync("/api/Movimientos");
         responseJson = await response.EnsureSuccessStatusCode().Content.ReadAsStringAsync();
